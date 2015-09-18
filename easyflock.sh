@@ -19,7 +19,7 @@ MIN_VAG_FIX=2
 # SCRIPT #
 ##########
 
-USAGE="$0 [-h] [-v]"
+USAGE="$0 [-h] [-v] [--check-vagrant] [--check-ssh]"
 
 usage() {
     echo "$USAGE"
@@ -53,6 +53,8 @@ while [ "$#" -gt "0" ]; do
 	    VERBOSE=1 ;;
 	--check-vagrant)
 	    CHECK_VAGRANT=1 ;;
+	--check-ssh)
+	    CHECK_SSH=1 ;;
 	-*)
 	    die "unrecognised option: '$arg'\n$USAGE" ;;
 	*)
@@ -76,4 +78,10 @@ then
 			test "$VAG_FIX" -gt "$MIN_VAG_FIX" || die "$VAG_VERS_LEAST"
 		}
 	}
+fi
+
+if test "$CHECK_SSH" = "1"
+then
+	log "Checking ssh is installed"
+	type ssh || die "Ssh is not installed"
 fi
