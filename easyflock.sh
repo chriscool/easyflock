@@ -6,6 +6,19 @@
 # Script to easily install and configure Flocker.
 # See https://clusterhq.com for information on Flocker.
 
+##########
+# CONFIG #
+##########
+
+# Min Vagrant version to run flocker:
+MIN_VAG_MAJ=1
+MIN_VAG_MIN=6
+MIN_VAG_FIX=2
+
+##########
+# SCRIPT #
+##########
+
 USAGE="$0 [-h] [-v]"
 
 usage() {
@@ -52,10 +65,6 @@ then
 	log "Checking vagrant is installed"
 	VAGRANT=$(vagrant --version) || die "Vagrant is not installed"
 	log "Checking vagrant version"
-	# Min Vagrant version
-	MIN_VAG_MAJ=1
-	MIN_VAG_MIN=6
-	MIN_VAG_FIX=2
 	VAG_VERS_LEAST="Vagrant version '$VAGRANT' should be at least $MIN_VAG_MAJ.$MIN_VAG_MIN.$MIN_VAG_FIX"
 	VAG_MAJ=$(expr "$VAGRANT" : "Vagrant \([^.]*\).*") || die "Unknown Vagrant version '$VAGRANT'"
 	test "$VAG_MAJ" -gt $(expr "$MIN_VAG_MAJ" - 1) || die "$VAG_VERS_LEAST"
