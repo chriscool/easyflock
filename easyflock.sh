@@ -28,6 +28,7 @@ usage() {
     echo "		-h|--help: print this usage message and exit"
     echo "		-v|--verbose: print logs of what happens"
     echo "		--check-vagrant: check vagrant version"
+    echo "		--check-ssh: check ssh is installed"
     exit 0
 }
 
@@ -65,7 +66,8 @@ done
 if test "$CHECK_VAGRANT" = "1"
 then
 	log "Checking vagrant is installed"
-	VAGRANT=$(vagrant --version) || die "Vagrant is not installed"
+	type vagrant || die "Vagrant is not installed"
+	VAGRANT=$(vagrant --version) || die "vagrant --version fails"
 	log "Checking vagrant version"
 	VAG_VERS_LEAST="Vagrant version '$VAGRANT' should be at least $MIN_VAG_MAJ.$MIN_VAG_MIN.$MIN_VAG_FIX"
 	VAG_MAJ=$(expr "$VAGRANT" : "Vagrant \([^.]*\).*") || die "Unknown Vagrant version '$VAGRANT'"
@@ -78,10 +80,12 @@ then
 			test "$VAG_FIX" -ge "$MIN_VAG_FIX" || die "$VAG_VERS_LEAST"
 		}
 	}
+	echo "Vagrant version '$VAGRANT' is ok"
 fi
 
 if test "$CHECK_SSH" = "1"
 then
 	log "Checking ssh is installed"
 	type ssh || die "Ssh is not installed"
+	SSH=$(ssh -V) || die "ssh -V fails"
 fi
