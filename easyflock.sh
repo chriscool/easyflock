@@ -40,7 +40,7 @@ log() {
 }
 
 die() {
-    echo >&2 "fatal: $@"
+    printf >&2 "fatal: %s\n" "$@"
     exit 1
 }
 
