@@ -11,9 +11,7 @@
 ##########
 
 # Min Vagrant version to run flocker:
-MIN_VAG_MAJ=1
-MIN_VAG_MIN=6
-MIN_VAG_FIX=2
+MIN_VAGRANT_VERSION="1.6.2"
 
 ##########
 # SCRIPT #
@@ -72,23 +70,46 @@ while [ "$#" -gt "0" ]; do
     esac
 done
 
+check_at_least_version() {
+	MIN_VERS="$1"
+	CUR_VERS="$2"
+	PROG_NAME="$3"
+	# Get major, minor and fix numbers for each version
+	MIN_MAJ=$(expr "$MIN_VERS" : "\([^.]*\).*") || die "No major version number in '$MIN_VERS'"
+	CUR_MAJ=$(expr "$CUR_VERS" : "\([^.]*\).*") || die "No major version number in '$CUR_VERS'"
+	if MIN_MIN=$(expr "$MIN_VERS" : "[^.]*\.\([^.]*\).*")
+	then
+		MIN_FIX=$(expr "$MIN_VERS" : "[^.]*\.[^.]*\.\([^.]*\).*") || MIN_FIX="0"
+	else
+		MIN_MIN="0"
+		MIN_FIX="0"
+	fi
+	if CUR_MIN=$(expr "$CUR_VERS" : "[^.]*\.\([^.]*\).*")
+	then
+		CUR_FIX=$(expr "$CUR_VERS" : "[^.]*\.[^.]*\.\([^.]*\).*") || CUR_FIX="0"
+	else
+		CUR_MIN="0"
+		CUR_FIX="0"
+	fi
+	# Compare versions
+	VERS_LEAST="$PROG_NAME version '$CUR_VERS' should be at least '$MIN_VERS'"
+	test "$CUR_MAJ" -gt $(expr "$MIN_MAJ" - 1) || die "$VERS_LEAST"
+	test "$CUR_MAJ" -gt "$MIN_MAJ" || {
+		test "$CUR_MIN" -gt $(expr "$MIN_MIN" - 1) || die "$VERS_LEAST"
+		test "$CUR_MIN" -gt "$MIN_MIN" || {
+			test "$CUR_FIX" -ge "$MIN_FIX" || die "$VAG_VERS_LEAST"
+		}
+	}
+}
+
 if test "$CHECK_VAGRANT" = "1"
 then
 	log "Checking vagrant is installed"
 	type vagrant || die "Vagrant is not installed"
 	VAGRANT=$(vagrant --version) || die "vagrant --version fails"
 	log "Checking vagrant version"
-	VAG_VERS_LEAST="Vagrant version '$VAGRANT' should be at least $MIN_VAG_MAJ.$MIN_VAG_MIN.$MIN_VAG_FIX"
-	VAG_MAJ=$(expr "$VAGRANT" : "Vagrant \([^.]*\).*") || die "Unknown Vagrant version '$VAGRANT'"
-	test "$VAG_MAJ" -gt $(expr "$MIN_VAG_MAJ" - 1) || die "$VAG_VERS_LEAST"
-	test "$VAG_MAJ" -gt "$MIN_VAG_MAJ" || {
-		VAG_MIN=$(expr "$VAGRANT" : "Vagrant [^.]*\.\([^.]*\).*") || die "$VAG_VERS_LEAST"
-		test "$VAG_MIN" -gt $(expr "$MIN_VAG_MIN" - 1) || die "$VAG_VERS_LEAST"
-		test "$VAG_MIN" -gt "$MIN_VAG_MIN" || {
-			VAG_FIX=$(expr "$VAGRANT" : "Vagrant [^.]*\.[^.]*\.\([^.]*\).*") || die "$VAG_VERS_LEAST"
-			test "$VAG_FIX" -ge "$MIN_VAG_FIX" || die "$VAG_VERS_LEAST"
-		}
-	}
+	VAG_VERS=$(expr "$VAGRANT" : "Vagrant \(.*\)") || die "Unknown Vagrant version '$VAGRANT'"
+	check_at_least_version "$MIN_VAGRANT_VERSION" "$VAG_VERS" "Vagrant"
 	echo "Vagrant version '$VAGRANT' is ok"
 fi
 
