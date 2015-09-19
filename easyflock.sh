@@ -30,6 +30,7 @@ usage() {
     echo "		--check-vagrant: check vagrant version"
     echo "		--check-virtualbox: check virtualbox is installed"
     echo "		--check-ssh: check ssh is installed"
+    echo "		--check-mongo: check mongo is installed"
     echo "		--check-python: check python version"
     exit 0
 }
