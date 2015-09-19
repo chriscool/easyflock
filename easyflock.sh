@@ -28,6 +28,7 @@ usage() {
     echo "		-h|--help: print this usage message and exit"
     echo "		-v|--verbose: print logs of what happens"
     echo "		--check-vagrant: check vagrant version"
+    echo "		--check-virtualbox: check virtualbox is installed"
     echo "		--check-ssh: check ssh is installed"
     exit 0
 }
