@@ -104,10 +104,10 @@ check_at_least_version() {
 
 if test "$CHECK_VAGRANT" = "1"
 then
-	log "Checking vagrant is installed"
+	log "Checking Vagrant is installed"
 	type vagrant || die "Vagrant is not installed"
 	VAGRANT=$(vagrant --version) || die "vagrant --version fails"
-	log "Checking vagrant version"
+	log "Checking Vagrant version"
 	VAG_VERS=$(expr "$VAGRANT" : "Vagrant \(.*\)") || die "Unknown Vagrant version '$VAGRANT'"
 	check_at_least_version "$MIN_VAGRANT_VERSION" "$VAG_VERS" "Vagrant"
 	echo "Vagrant version '$VAGRANT' is ok"
