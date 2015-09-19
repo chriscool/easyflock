@@ -39,4 +39,30 @@ test_expect_success "before current minimum version does not pass" '
 	test_must_fail easyflock.sh --check-vagrant
 '
 
+test_expect_success "misc big versions pass" '
+	create_fake_vagrant "2" &&
+	easyflock.sh --check-vagrant &&
+	create_fake_vagrant "1.9" &&
+	easyflock.sh --check-vagrant &&
+	create_fake_vagrant "1.10.2" &&
+	easyflock.sh --check-vagrant &&
+	create_fake_vagrant "4.1.2.3" &&
+	easyflock.sh --check-vagrant &&
+	create_fake_vagrant "10" &&
+	easyflock.sh --check-vagrant
+'
+
+test_expect_success "misc small versions do not pass" '
+	create_fake_vagrant "1" &&
+	test_must_fail easyflock.sh --check-vagrant &&
+	create_fake_vagrant "0.9" &&
+	test_must_fail easyflock.sh --check-vagrant &&
+	create_fake_vagrant "0.10.80" &&
+	test_must_fail easyflock.sh --check-vagrant &&
+	create_fake_vagrant "1.1.9.7" &&
+	test_must_fail easyflock.sh --check-vagrant &&
+	create_fake_vagrant "0" &&
+	test_must_fail easyflock.sh --check-vagrant
+'
+
 test_done
