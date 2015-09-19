@@ -30,6 +30,7 @@ usage() {
     echo "		--check-vagrant: check vagrant version"
     echo "		--check-virtualbox: check virtualbox is installed"
     echo "		--check-ssh: check ssh is installed"
+    echo "		--check-python: check python version"
     exit 0
 }
 
@@ -61,6 +62,8 @@ while [ "$#" -gt "0" ]; do
 	    CHECK_SSH=1 ;;
 	--check-mongo)
 	    CHECK_MONGO=1 ;;
+	--check-python)
+	    CHECK_PYTHON=1 ;;
 	-*)
 	    die "unrecognised option: '$arg'\n$USAGE" ;;
 	*)
@@ -108,5 +111,12 @@ then
 	log "Checking Mongo is installed"
 	type mongo || die "VirtualBox is not installed"
 	MONGO=$(mongo --version) || die "mongo --version fails"
+fi
+
+if test "$CHECK_PYTHON" = "1"
+then
+	log "Checking Python is installed"
+	type python || die "Python is not installed"
+	PYTHON=$(python --version 2>&1) || die "python --version fails"
 fi
 
