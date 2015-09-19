@@ -54,6 +54,8 @@ while [ "$#" -gt "0" ]; do
 	    VERBOSE=1 ;;
 	--check-vagrant)
 	    CHECK_VAGRANT=1 ;;
+	--check-virtualbox)
+	    CHECK_VIRTUALBOX=1 ;;
 	--check-ssh)
 	    CHECK_SSH=1 ;;
 	-*)
@@ -81,6 +83,12 @@ then
 		}
 	}
 	echo "Vagrant version '$VAGRANT' is ok"
+fi
+
+if test "$CHECK_VIRTUALBOX" = "1"
+then
+	log "Checking VirtualBox is installed"
+	type virtualbox || die "VirtualBox is not installed"
 fi
 
 if test "$CHECK_SSH" = "1"
