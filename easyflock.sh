@@ -75,7 +75,7 @@ then
 		test "$VAG_MIN" -gt $(expr "$MIN_VAG_MIN" - 1) || die "$VAG_VERS_LEAST"
 		test "$VAG_MIN" -gt "$MIN_VAG_MIN" || {
 			VAG_FIX=$(expr "$VAGRANT" : "Vagrant [^.]*\.[^.]*\.\([^.]*\).*") || die "$VAG_VERS_LEAST"
-			test "$VAG_FIX" -gt "$MIN_VAG_FIX" || die "$VAG_VERS_LEAST"
+			test "$VAG_FIX" -ge "$MIN_VAG_FIX" || die "$VAG_VERS_LEAST"
 		}
 	}
 fi
