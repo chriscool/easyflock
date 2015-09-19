@@ -29,4 +29,14 @@ test_expect_success "--check-vagrant works" '
 	easyflock.sh --check-vagrant
 '
 
+test_expect_success "current minimum version passes" '
+	create_fake_vagrant "1.6.2" &&
+	easyflock.sh --check-vagrant
+'
+
+test_expect_success "before current minimum version does not pass" '
+	create_fake_vagrant "1.6.1" &&
+	test_must_fail easyflock.sh --check-vagrant
+'
+
 test_done
