@@ -86,6 +86,8 @@ fi
 if test "$CHECK_SSH" = "1"
 then
 	log "Checking ssh is installed"
-	type ssh || die "Ssh is not installed"
+	type ssh || die "ssh is not installed"
 	SSH=$(ssh -V) || die "ssh -V fails"
+	type ssh-agent || die "ssh-agent is not installed"
+	type ssh-add || die "ssh-add is not installed"
 fi
