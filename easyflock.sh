@@ -58,6 +58,8 @@ while [ "$#" -gt "0" ]; do
 	    CHECK_VIRTUALBOX=1 ;;
 	--check-ssh)
 	    CHECK_SSH=1 ;;
+	--check-mongo)
+	    CHECK_MONGO=1 ;;
 	-*)
 	    die "unrecognised option: '$arg'\n$USAGE" ;;
 	*)
@@ -99,3 +101,11 @@ then
 	type ssh-agent || die "ssh-agent is not installed"
 	type ssh-add || die "ssh-add is not installed"
 fi
+
+if test "$CHECK_MONGO" = "1"
+then
+	log "Checking Mongo is installed"
+	type mongo || die "VirtualBox is not installed"
+	MONGO=$(mongo --version) || die "mongo --version fails"
+fi
+
