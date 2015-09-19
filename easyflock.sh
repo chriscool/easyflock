@@ -12,6 +12,8 @@
 
 # Min Vagrant version to run flocker:
 MIN_VAGRANT_VERSION="1.6.2"
+# Min Python version to run flocker:
+MIN_PYTHON_VERSION="2.7"
 
 ##########
 # SCRIPT #
@@ -140,5 +142,9 @@ then
 	log "Checking Python is installed"
 	type python || die "Python is not installed"
 	PYTHON=$(python --version 2>&1) || die "python --version fails"
+	log "Checking Python version"
+	PY_VERS=$(expr "$PYTHON" : "Python \(.*\)") || die "Unknown Python version '$PYTHON'"
+	check_at_least_version "$MIN_PYTHON_VERSION" "$PY_VERS" "Python"
+	echo "Python version '$PYTHON' is ok"
 fi
 
