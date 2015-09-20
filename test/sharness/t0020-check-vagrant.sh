@@ -2,8 +2,7 @@
 
 test_description="Test --check-vagrant"
 
-. ./lib/sharness/sharness.sh
-
+. lib/test-lib.sh
 
 test_expect_success "PATH setup" '
 	mkdir bin &&

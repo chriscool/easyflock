@@ -2,7 +2,7 @@
 
 test_description="Test --help"
 
-. ./lib/sharness/sharness.sh
+. lib/test-lib.sh
 
 export PATH=../../..:$PATH
 
