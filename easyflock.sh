@@ -165,33 +165,14 @@ check_DOCKER() {
 				"Docker version \(.*\),.*" "$MIN_DOCKER_VERSION"
 }
 
-if test "$CHECK_VAGRANT" = "1" || test "$CHECK_ALL" = "1"
-then
-	check_VAGRANT
-fi
-
-if test "$CHECK_VIRTUALBOX" = "1" || test "$CHECK_ALL" = "1"
-then
-	check_VIRTUALBOX
-fi
-
-if test "$CHECK_SSH" = "1" || test "$CHECK_ALL" = "1"
-then
-	check_SSH
-fi
-
-if test "$CHECK_MONGO" = "1" || test "$CHECK_ALL" = "1"
-then
-	check_MONGO
-fi
-
-if test "$CHECK_PYTHON" = "1" || test "$CHECK_ALL" = "1"
-then
-	check_PYTHON
-fi
-
-if test "$CHECK_DOCKER" = "1" || test "$CHECK_ALL" = "1"
-then
-	check_DOCKER
-fi
-
+# Perform checks
+for app in "VAGRANT" "VIRTUALBOX" "SSH" "MONGO" "PYTHON" "DOCKER"
+do
+	var="CHECK_$app"
+	eval value=\$$var
+	if test "$value" = "1" || test "$CHECK_ALL" = "1"
+	then
+		func="check_$app"
+		eval $func
+	fi
+done
