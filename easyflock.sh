@@ -110,7 +110,7 @@ check_at_least_version() {
 	test "$CUR_MAJ" -gt "$MIN_MAJ" || {
 		test "$CUR_MIN" -gt $(expr "$MIN_MIN" - 1) || die "$VERS_LEAST"
 		test "$CUR_MIN" -gt "$MIN_MIN" || {
-			test "$CUR_FIX" -ge "$MIN_FIX" || die "$VAG_VERS_LEAST"
+			test "$CUR_FIX" -ge "$MIN_FIX" || die "$VERS_LEAST"
 		}
 	}
 }
