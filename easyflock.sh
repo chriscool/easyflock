@@ -115,15 +115,26 @@ check_at_least_version() {
 	}
 }
 
+check_installed_version() {
+	name="$1"
+	bin="$2"
+	cmd="$3"
+	reg="$4"
+	vers="$5"
+
+	log "Checking $name is installed"
+	type $bin || die "$name is not installed"
+	VERS_STR=$($cmd 2>&1) || die "$cmd fails"
+	log "Checking $name version"
+	VERS_NUM=$(expr "$VERS_STR" : "$reg") || die "Unknown $name version '$VERS_STR'"
+	check_at_least_version "$vers" "$VERS_NUM" "$name"
+	echo "$name version '$VERS_STR' is ok"
+}
+
 if test "$CHECK_VAGRANT" = "1" || test "$CHECK_ALL" = "1"
 then
-	log "Checking Vagrant is installed"
-	type vagrant || die "Vagrant is not installed"
-	VAGRANT=$(vagrant --version) || die "vagrant --version fails"
-	log "Checking Vagrant version"
-	VAG_VERS=$(expr "$VAGRANT" : "Vagrant \(.*\)") || die "Unknown Vagrant version '$VAGRANT'"
-	check_at_least_version "$MIN_VAGRANT_VERSION" "$VAG_VERS" "Vagrant"
-	echo "Vagrant version '$VAGRANT' is ok"
+	check_installed_version "Vagrant" "vagrant" "vagrant --version" \
+				"Vagrant \(.*\)" "$MIN_VAGRANT_VERSION"
 fi
 
 if test "$CHECK_VIRTUALBOX" = "1" || test "$CHECK_ALL" = "1"
@@ -150,23 +161,13 @@ fi
 
 if test "$CHECK_PYTHON" = "1" || test "$CHECK_ALL" = "1"
 then
-	log "Checking Python is installed"
-	type python || die "Python is not installed"
-	PYTHON=$(python --version 2>&1) || die "python --version fails"
-	log "Checking Python version"
-	PY_VERS=$(expr "$PYTHON" : "Python \(.*\)") || die "Unknown Python version '$PYTHON'"
-	check_at_least_version "$MIN_PYTHON_VERSION" "$PY_VERS" "Python"
-	echo "Python version '$PYTHON' is ok"
+	check_installed_version "Python" "python" "python --version" \
+				"Python \(.*\)" "$MIN_PYTHON_VERSION"
 fi
 
 if test "$CHECK_DOCKER" = "1" || test "$CHECK_ALL" = "1"
 then
-	log "Checking Docker is installed"
-	type docker || die "Docker is not installed"
-	DOCKER=$(docker --version) || die "docker --version fails"
-	log "Checking Docker version"
-	DOC_VERS=$(expr "$DOCKER" : "Docker version \(.*\),.*") || die "Unknown Docker version '$DOCKER'"
-	check_at_least_version "$MIN_DOCKER_VERSION" "$DOC_VERS" "Docker"
-	echo "Docker version '$DOCKER' is ok"
+	check_installed_version "Docker" "docker" "docker --version" \
+				"Docker version \(.*\),.*" "$MIN_DOCKER_VERSION"
 fi
 
