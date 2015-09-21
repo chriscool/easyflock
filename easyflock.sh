@@ -10,9 +10,14 @@
 # CONFIG #
 ##########
 
-# Min Vagrant version to run flocker:
+# Min Docker version to run flocker
+MIN_DOCKER_VERSION="1.7.1"	# Previous versions should work
+				# but I tested with 1.7.1 ...
+
+# Min Vagrant version to run flocker
 MIN_VAGRANT_VERSION="1.6.2"
-# Min Python version to run flocker:
+
+# Min Python version to run flocker
 MIN_PYTHON_VERSION="2.7"
 
 ##########
@@ -32,6 +37,7 @@ usage() {
     echo "		--check-ssh: check ssh is installed"
     echo "		--check-mongo: check mongo is installed"
     echo "		--check-python: check python version"
+    echo "		--check-docker: check docker version"
     exit 0
 }
 
@@ -65,6 +71,8 @@ while [ "$#" -gt "0" ]; do
 	    CHECK_MONGO=1 ;;
 	--check-python)
 	    CHECK_PYTHON=1 ;;
+	--check-docker)
+	    CHECK_DOCKER=1 ;;
 	-*)
 	    die "unrecognised option: '$arg'\n$USAGE" ;;
 	*)
@@ -146,5 +154,16 @@ then
 	PY_VERS=$(expr "$PYTHON" : "Python \(.*\)") || die "Unknown Python version '$PYTHON'"
 	check_at_least_version "$MIN_PYTHON_VERSION" "$PY_VERS" "Python"
 	echo "Python version '$PYTHON' is ok"
+fi
+
+if test "$CHECK_DOCKER" = "1"
+then
+	log "Checking Docker is installed"
+	type docker || die "Docker is not installed"
+	DOCKER=$(docker --version) || die "docker --version fails"
+	log "Checking Docker version"
+	DOC_VERS=$(expr "$DOCKER" : "Docker version \(.*\),.*") || die "Unknown Docker version '$DOCKER'"
+	check_at_least_version "$MIN_DOCKER_VERSION" "$DOC_VERS" "Docker"
+	echo "Docker version '$DOCKER' is ok"
 fi
 
