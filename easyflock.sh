@@ -38,6 +38,7 @@ usage() {
     echo "		--check-mongo: check mongo is installed"
     echo "		--check-python: check python version"
     echo "		--check-docker: check docker version"
+    echo "		--check-all: check everything"
     exit 0
 }
 
@@ -73,6 +74,8 @@ while [ "$#" -gt "0" ]; do
 	    CHECK_PYTHON=1 ;;
 	--check-docker)
 	    CHECK_DOCKER=1 ;;
+	--check-all)
+	    CHECK_ALL=1 ;;
 	-*)
 	    die "unrecognised option: '$arg'\n$USAGE" ;;
 	*)
@@ -112,7 +115,7 @@ check_at_least_version() {
 	}
 }
 
-if test "$CHECK_VAGRANT" = "1"
+if test "$CHECK_VAGRANT" = "1" || test "$CHECK_ALL" = "1"
 then
 	log "Checking Vagrant is installed"
 	type vagrant || die "Vagrant is not installed"
@@ -123,13 +126,13 @@ then
 	echo "Vagrant version '$VAGRANT' is ok"
 fi
 
-if test "$CHECK_VIRTUALBOX" = "1"
+if test "$CHECK_VIRTUALBOX" = "1" || test "$CHECK_ALL" = "1"
 then
 	log "Checking VirtualBox is installed"
 	type virtualbox || die "VirtualBox is not installed"
 fi
 
-if test "$CHECK_SSH" = "1"
+if test "$CHECK_SSH" = "1" || test "$CHECK_ALL" = "1"
 then
 	log "Checking ssh is installed"
 	type ssh || die "ssh is not installed"
@@ -138,14 +141,14 @@ then
 	type ssh-add || die "ssh-add is not installed"
 fi
 
-if test "$CHECK_MONGO" = "1"
+if test "$CHECK_MONGO" = "1" || test "$CHECK_ALL" = "1"
 then
 	log "Checking Mongo is installed"
 	type mongo || die "VirtualBox is not installed"
 	MONGO=$(mongo --version) || die "mongo --version fails"
 fi
 
-if test "$CHECK_PYTHON" = "1"
+if test "$CHECK_PYTHON" = "1" || test "$CHECK_ALL" = "1"
 then
 	log "Checking Python is installed"
 	type python || die "Python is not installed"
@@ -156,7 +159,7 @@ then
 	echo "Python version '$PYTHON' is ok"
 fi
 
-if test "$CHECK_DOCKER" = "1"
+if test "$CHECK_DOCKER" = "1" || test "$CHECK_ALL" = "1"
 then
 	log "Checking Docker is installed"
 	type docker || die "Docker is not installed"
