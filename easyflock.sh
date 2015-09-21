@@ -131,43 +131,67 @@ check_installed_version() {
 	echo "$name version '$VERS_STR' is ok"
 }
 
-if test "$CHECK_VAGRANT" = "1" || test "$CHECK_ALL" = "1"
-then
+check_VAGRANT() {
 	check_installed_version "Vagrant" "vagrant" "vagrant --version" \
 				"Vagrant \(.*\)" "$MIN_VAGRANT_VERSION"
-fi
+}
 
-if test "$CHECK_VIRTUALBOX" = "1" || test "$CHECK_ALL" = "1"
-then
+check_VIRTUALBOX() {
 	log "Checking VirtualBox is installed"
 	type virtualbox || die "VirtualBox is not installed"
-fi
+}
 
-if test "$CHECK_SSH" = "1" || test "$CHECK_ALL" = "1"
-then
+check_SSH() {
 	log "Checking ssh is installed"
 	type ssh || die "ssh is not installed"
 	SSH=$(ssh -V) || die "ssh -V fails"
 	type ssh-agent || die "ssh-agent is not installed"
 	type ssh-add || die "ssh-add is not installed"
+}
+
+check_MONGO() {
+	log "Checking Mongo is installed"
+	type mongo || die "VirtualBox is not installed"
+	MONGO=$(mongo --version) || die "mongo --version fails"
+}
+
+check_PYTHON() {
+	check_installed_version "Python" "python" "python --version" \
+				"Python \(.*\)" "$MIN_PYTHON_VERSION"
+}
+
+check_DOCKER() {
+	check_installed_version "Docker" "docker" "docker --version" \
+				"Docker version \(.*\),.*" "$MIN_DOCKER_VERSION"
+}
+
+if test "$CHECK_VAGRANT" = "1" || test "$CHECK_ALL" = "1"
+then
+	check_VAGRANT
+fi
+
+if test "$CHECK_VIRTUALBOX" = "1" || test "$CHECK_ALL" = "1"
+then
+	check_VIRTUALBOX
+fi
+
+if test "$CHECK_SSH" = "1" || test "$CHECK_ALL" = "1"
+then
+	check_SSH
 fi
 
 if test "$CHECK_MONGO" = "1" || test "$CHECK_ALL" = "1"
 then
-	log "Checking Mongo is installed"
-	type mongo || die "VirtualBox is not installed"
-	MONGO=$(mongo --version) || die "mongo --version fails"
+	check_MONGO
 fi
 
 if test "$CHECK_PYTHON" = "1" || test "$CHECK_ALL" = "1"
 then
-	check_installed_version "Python" "python" "python --version" \
-				"Python \(.*\)" "$MIN_PYTHON_VERSION"
+	check_PYTHON
 fi
 
 if test "$CHECK_DOCKER" = "1" || test "$CHECK_ALL" = "1"
 then
-	check_installed_version "Docker" "docker" "docker --version" \
-				"Docker version \(.*\),.*" "$MIN_DOCKER_VERSION"
+	check_DOCKER
 fi
 
