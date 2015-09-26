@@ -76,6 +76,20 @@ while [ "$#" -gt "0" ]; do
 	    CHECK_DOCKER=1 ;;
 	--check-all)
 	    CHECK_ALL=1 ;;
+	--install-vagrant)
+	    INSTALL_VAGRANT=1 ;;
+	--install-virtualbox)
+	    INSTALL_VIRTUALBOX=1 ;;
+	--install-ssh)
+	    INSTALL_SSH=1 ;;
+	--install-mongo)
+	    INSTALL_MONGO=1 ;;
+	--install-python)
+	    INSTALL_PYTHON=1 ;;
+	--install-docker)
+	    INSTALL_DOCKER=1 ;;
+	--install-all)
+	    INSTALL_ALL=1 ;;
 	-*)
 	    die "unrecognised option: '$arg'\n$USAGE" ;;
 	*)
@@ -176,3 +190,83 @@ do
 		eval $func
 	fi
 done
+
+check_file_line() {
+	test -f "$1" || return
+	egrep "^$2" "$1" >/dev/null || return
+	egrep "^$2" "$1" | sed -e "s/^$2//"
+}
+
+# For now only distrib with /etc/os-release, /etc/lsb-release
+# or lsb_release are supported.
+
+find_distrib() {
+	check_file_line "/etc/os-release" "ID=" ||
+	check_file_line "/etc/lsb-release" "DISTRIB_ID=" ||
+	lsb_release -i -s
+}
+
+DISTRIB=$(find_distrib) ||
+die "unknown linux distrib!" "sorry, your distrib might not be supported for now!"
+DISTRIB=$(echo "$DISTRIB" | tr [A-Z] [a-z])
+
+init_package_system() {
+	test "$INIT_PACKAGES_DONE" = 1 && return
+	log "Initializing package system"
+	case "$DISTRIB" in
+	    debian|ubuntu) echo "n" | apt-get update ;;
+	    *) die "sorry, your distrib is not be supported for now!" ;;
+	esac
+	INIT_PACKAGES_DONE=1
+}
+
+install_package() {
+	log "Installing package '$1'"
+	case "$DISTRIB" in
+	    debian|ubuntu) apt-get install -y "$1" ;;
+	    *) die "sorry, your distrib is not be supported for now!" ;;
+	esac
+}
+
+install_VAGRANT() {
+	init_package_system
+	install_package "vagrant"
+}
+
+install_VIRTUALBOX() {
+	init_package_system
+	install_package "virtualbox"
+}
+
+install_SSH() {
+	init_package_system
+	install_package "ssh"
+}
+
+install_MONGO() {
+	init_package_system
+	install_package "mongodb-clients"
+}
+
+install_PYTHON() {
+	init_package_system
+	install_package "python"
+}
+
+install_DOCKER() {
+	init_package_system
+	install_package "docker"
+}
+
+# Perform installs
+for app in "VAGRANT" "VIRTUALBOX" "SSH" "MONGO" "PYTHON" "DOCKER"
+do
+	var="INSTALL_$app"
+	eval value=\$$var
+	if test "$value" = "1" || test "$INSTALL_ALL" = "1"
+	then
+		func="install_$app"
+		eval $func
+	fi
+done
+
