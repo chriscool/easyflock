@@ -210,51 +210,61 @@ DISTRIB=$(find_distrib) ||
 die "unknown linux distrib!" "sorry, your distrib might not be supported for now!"
 DISTRIB=$(echo "$DISTRIB" | tr [A-Z] [a-z])
 
+init_aptget() {
+	echo "n" | apt-get update ||
+	die "'apt-get update' failed!"
+}
+
 init_package_system() {
 	test "$INIT_PACKAGES_DONE" = 1 && return
 	log "Initializing package system"
 	case "$DISTRIB" in
-	    debian|ubuntu) echo "n" | apt-get update ;;
+	    debian|ubuntu) init_aptget ;;
 	    *) die "sorry, your distrib is not be supported for now!" ;;
 	esac
 	INIT_PACKAGES_DONE=1
 }
 
+aptget_install() {
+	apt-get install -y "$1" ||
+	die "'apt-get install $1' failed!"
+}
+
 install_package() {
 	log "Installing package '$1'"
 	case "$DISTRIB" in
-	    debian|ubuntu) apt-get install -y "$1" ;;
+	    debian|ubuntu) aptget_install "$1" ;;
 	    *) die "sorry, your distrib is not be supported for now!" ;;
 	esac
 }
 
 install_VAGRANT() {
-	init_package_system
+	init_package_system &&
 	install_package "vagrant"
 }
 
 install_VIRTUALBOX() {
-	init_package_system
+	init_package_system &&
 	install_package "virtualbox"
 }
 
 install_SSH() {
-	init_package_system
+	init_package_system &&
 	install_package "ssh"
 }
 
 install_MONGO() {
-	init_package_system
+	init_package_system &&
 	install_package "mongodb-clients"
 }
 
 install_PYTHON() {
-	init_package_system
+	init_package_system &&
 	install_package "python"
 }
 
 install_DOCKER() {
-	init_package_system
+	init_package_system &&
 	install_package "docker"
 }
 
