@@ -19,9 +19,14 @@ SHARNESS_LIB="lib/sharness/sharness.sh"
 DEFAULT_DOCKER_IMG="debian"
 DOCKER_IMG="$DEFAULT_DOCKER_IMG"
 
+TEST_TRASH_DIR=$(pwd)
+TEST_SCRIPTS_DIR=$(dirname "$TEST_TRASH_DIR")
+TEST_ROOT_DIR=$(dirname "$TEST_SCRIPTS_DIR")
+APP_ROOT_DIR=$(dirname "$TEST_ROOT_DIR")
+
 # This writes a docker ID on stdout
 start_docker() {
-	docker run -i -d "$DOCKER_IMG" /bin/bash
+	docker run -it -d -v "$APP_ROOT_DIR:/mnt" "$DOCKER_IMG" /bin/bash
 }
 
 # This takes a docker ID and a command as arguments
