@@ -15,3 +15,21 @@ SHARNESS_LIB="lib/sharness/sharness.sh"
 }
 
 # Please put easyflock specific shell functions and variables below
+
+DEFAULT_DOCKER_IMG="debian"
+DOCKER_IMG="$DEFAULT_DOCKER_IMG"
+
+# This writes a docker ID on stdout
+start_docker() {
+	docker run -i -d "$DOCKER_IMG" /bin/bash
+}
+
+# This takes a docker ID and a command as arguments
+exec_docker() {
+	docker exec -i "$1" /bin/bash -c "$2"
+}
+
+# This takes a docker ID as argument
+stop_docker() {
+	docker stop "$1"
+}
