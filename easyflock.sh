@@ -97,13 +97,24 @@ while [ "$#" -gt "0" ]; do
     esac
 done
 
+major_number() {
+    vers="$1"
+
+    # Hack around 'expr' exiting with code 1 when it outputs 0
+    case "$vers" in
+        0) echo "0" ;;
+        0.*) echo "0" ;;
+        *) expr "$vers" : "\([^.]*\).*" || return 1
+    esac
+}
+
 check_at_least_version() {
 	MIN_VERS="$1"
 	CUR_VERS="$2"
 	PROG_NAME="$3"
 	# Get major, minor and fix numbers for each version
-	MIN_MAJ=$(expr "$MIN_VERS" : "\([^.]*\).*") || die "No major version number in '$MIN_VERS'"
-	CUR_MAJ=$(expr "$CUR_VERS" : "\([^.]*\).*") || die "No major version number in '$CUR_VERS'"
+	MIN_MAJ=$(major_number "$MIN_VERS") || die "No major version number in '$MIN_VERS'"
+	CUR_MAJ=$(major_number "$CUR_VERS") || die "No major version number in '$CUR_VERS'"
 	if MIN_MIN=$(expr "$MIN_VERS" : "[^.]*\.\([^.]*\).*")
 	then
 		MIN_FIX=$(expr "$MIN_VERS" : "[^.]*\.[^.]*\.\([^.]*\).*") || MIN_FIX="0"
